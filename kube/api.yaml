@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: employee-api-pankaj-service
+  labels:
+    app: employee-api-pankaj
+spec:
+  selector:
+    app: employee-api-pankaj
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30123
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-api-pankaj-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: employee-api-pankaj
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: employee-api-pankaj
+    spec:
+      containers:
+      - name: employee-api-pankaj
+        image: pankaj2814/employee-api-pankaj:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env:
+          - name: SQL_CONN
+            valueFrom:
+              configMapKeyRef:
+                name: mssql-config
+                key: mssql.connection
+          - name: SQL_PASS
+            valueFrom:
+              secretKeyRef:
+                name: mssql-config
+                key: password

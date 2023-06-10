@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-config
+  labels:
+    app: employee-api-pankaj  
+data:
+  mssql.connection: server=employee-api-pankaj-mysql-service;database=db;user=root;password=<PASSWORD>;
